@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Nick Fury",
+    "email": "nick@shield.com",
+    "password": "password123",
+    "role": "ADMIN",
+    "country": "Global"
+  },
+  {
+    "name": "Captain Marvel",
+    "email": "carol@shield.com",
+    "password": "password123",
+    "role": "MANAGER",
+    "country": "India"
+  },
+  {
+    "name": "Captain America",
+    "email": "steve@shield.com",
+    "password": "password123",
+    "role": "MANAGER",
+    "country": "America"
+  },
+  {
+    "name": "Thanos",
+    "email": "thanos@titan.com",
+    "password": "password123",
+    "role": "MEMBER",
+    "country": "India"
+  },
+  {
+    "name": "Thor",
+    "email": "thor@asgard.com",
+    "password": "password123",
+    "role": "MEMBER",
+    "country": "India"
+  },
+  {
+    "name": "Travis",
+    "email": "travis@scott.com",
+    "password": "password123",
+    "role": "MEMBER",
+    "country": "America"
+  }
+]

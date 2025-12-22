@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Paneer Tikka",
+    "description": "Grilled cottage cheese",
+    "price": 250,
+    "category": "Starter",
+    "restaurantRef": "Spice Garden"
+  },
+  {
+    "name": "Butter Chicken",
+    "description": "Creamy tomato gravy",
+    "price": 450,
+    "category": "Main Course",
+    "restaurantRef": "Spice Garden"
+  },
+  {
+    "name": "Whopper",
+    "description": "Flame-grilled beef burger",
+    "price": 10,
+    "category": "Main Course",
+    "restaurantRef": "Burger King"
+  },
+  {
+    "name": "French Fries",
+    "description": "Crispy potato fries",
+    "price": 5,
+    "category": "Sides",
+    "restaurantRef": "Burger King"
+  }
+]

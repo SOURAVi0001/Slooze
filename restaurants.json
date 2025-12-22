@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Spice Garden",
+    "country": "India",
+    "address": "Mumbai, India",
+    "cuisine": "Indian"
+  },
+  {
+    "name": "Burger King",
+    "country": "America",
+    "address": "New York, USA",
+    "cuisine": "American"
+  }
+]
