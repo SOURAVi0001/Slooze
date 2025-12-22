@@ -47,15 +47,24 @@ const seed = async () => {
   console.log('Restaurants seeded');
 
   // Seed Menu Items
-  const menuItems = [
+  const menuItemsData = [
     { name: 'Paneer Tikka', description: 'Grilled cottage cheese', price: 250, category: 'Starter', restaurantId: createdRestaurants[0]._id },
     { name: 'Butter Chicken', description: 'Creamy tomato gravy', price: 450, category: 'Main Course', restaurantId: createdRestaurants[0]._id },
     { name: 'Whopper', description: 'Flame-grilled beef burger', price: 10, category: 'Main Course', restaurantId: createdRestaurants[1]._id },
     { name: 'French Fries', description: 'Crispy potato fries', price: 5, category: 'Sides', restaurantId: createdRestaurants[1]._id },
   ];
 
-  await MenuItem.insertMany(menuItems);
+  const createdMenuItems = await MenuItem.insertMany(menuItemsData);
   console.log('Menu items seeded');
+
+  // Update Restaurants with Menu Item IDs
+  await Restaurant.findByIdAndUpdate(createdRestaurants[0]._id, {
+    $push: { menuItems: { $each: [createdMenuItems[0]._id, createdMenuItems[1]._id] } }
+  });
+  await Restaurant.findByIdAndUpdate(createdRestaurants[1]._id, {
+    $push: { menuItems: { $each: [createdMenuItems[2]._id, createdMenuItems[3]._id] } }
+  });
+  console.log('Restaurant menuItems updated');
 
   console.log('Seeding completed successfully');
   process.exit(0);

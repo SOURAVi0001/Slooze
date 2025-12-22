@@ -5,6 +5,7 @@ export interface IRestaurant extends Document {
   country: string;
   address: string;
   cuisine: string;
+  menuItems: mongoose.Types.ObjectId[];
 }
 
 const RestaurantSchema: Schema = new Schema({
@@ -12,6 +13,7 @@ const RestaurantSchema: Schema = new Schema({
   country: { type: String, required: true },
   address: { type: String, required: true },
   cuisine: { type: String, required: true },
+  menuItems: [{ type: Schema.Types.ObjectId, ref: 'MenuItem' }]
 }, { timestamps: true });
 
 export default mongoose.models.Restaurant || mongoose.model<IRestaurant>('Restaurant', RestaurantSchema);
