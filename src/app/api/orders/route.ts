@@ -4,6 +4,21 @@ import Order from '@/models/Order';
 import Restaurant from '@/models/Restaurant';
 import { authMiddleware, getCountryFilter, permissionMiddleware } from '@/lib/middleware';
 import { UserRole } from '@/types';
+import { z } from 'zod';
+
+const OrderItemSchema = z.object({
+  menuItemId: z.string(),
+  quantity: z.number().min(1),
+  price: z.number().min(0),
+});
+
+const CreateOrderSchema = z.object({
+  restaurantId: z.string(),
+  items: z.array(OrderItemSchema),
+  totalAmount: z.number().min(0),
+  paymentMethod: z.string().default('Credit Card'),
+  deliveryAddress: z.string().optional(),
+});
 
 export async function GET(req: NextRequest) {
   try {
@@ -14,7 +29,10 @@ export async function GET(req: NextRequest) {
     }
 
     const filter = getCountryFilter(auth.user!);
-    const orders = await Order.find(filter).populate('restaurantId').populate('items.menuItemId');
+    const orders = await Order.find(filter)
+      .sort({ createdAt: -1 })
+      .populate('restaurantId')
+      .populate('items.menuItemId');
 
     return NextResponse.json(orders);
   } catch (error) {
@@ -30,10 +48,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: auth.error }, { status: auth.status });
     }
 
-    const { restaurantId, items, totalAmount, paymentMethod } = await req.json();
+    const body = await req.json();
+    const validatedData = CreateOrderSchema.parse(body);
 
     // Check if restaurant is in the same country (unless Admin)
-    const restaurant = await Restaurant.findById(restaurantId);
+    const restaurant = await Restaurant.findById(validatedData.restaurantId);
     if (!restaurant) {
       return NextResponse.json({ error: 'Restaurant not found' }, { status: 404 });
     }
@@ -43,8 +62,6 @@ export async function POST(req: NextRequest) {
     }
 
     // Check if user can place order (Checkout/Pay)
-    // Requirement: Place Order (Checkout/Pay): ADMIN, MANAGER only. (Members cannot pay).
-    // If this POST represents "Placing Order", we check permissions.
     const permissionError = permissionMiddleware(auth.user!, [UserRole.ADMIN, UserRole.MANAGER]);
     if (permissionError) {
       return NextResponse.json({ error: 'Members cannot place orders (Checkout/Pay)' }, { status: 403 });
@@ -52,17 +69,22 @@ export async function POST(req: NextRequest) {
 
     const newOrder = new Order({
       userId: auth.user!.userId,
-      restaurantId,
-      items,
-      totalAmount,
+      restaurantId: validatedData.restaurantId,
+      items: validatedData.items,
+      totalAmount: validatedData.totalAmount,
       country: restaurant.country,
-      paymentMethod,
+      paymentMethod: validatedData.paymentMethod,
+      deliveryAddress: validatedData.deliveryAddress || 'Default Address',
+      estimatedDeliveryTime: Math.floor(Math.random() * 20) + 20, // 20-40 mins
     });
 
     await newOrder.save();
     return NextResponse.json(newOrder, { status: 201 });
   } catch (error) {
-    console.error(error);
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: 'Validation failed', details: error.errors }, { status: 400 });
+    }
+    console.error('Order API Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

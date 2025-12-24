@@ -13,6 +13,8 @@ export interface IOrder extends Document {
   status: OrderStatus;
   country: string;
   paymentMethod: string;
+  deliveryAddress: string;
+  estimatedDeliveryTime: number; // in minutes
 }
 
 const OrderSchema: Schema = new Schema({
@@ -27,6 +29,8 @@ const OrderSchema: Schema = new Schema({
   status: { type: String, enum: Object.values(OrderStatus), default: OrderStatus.PENDING },
   country: { type: String, required: true },
   paymentMethod: { type: String, default: 'Credit Card' },
+  deliveryAddress: { type: String, default: 'Default Address' },
+  estimatedDeliveryTime: { type: Number, default: 30 },
 }, { timestamps: true });
 
 export default mongoose.models.Order || mongoose.model<IOrder>('Order', OrderSchema);
